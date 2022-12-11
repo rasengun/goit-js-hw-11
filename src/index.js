@@ -8,6 +8,7 @@ import { PixabayAPI } from './js/PixabayAPI';
 
 const pixabayApi = new PixabayAPI();
 
+refs.loadMoreBtn.setAttribute('disabled', true);
 let page = 1;
 
 async function onFormSubmit(e) {
