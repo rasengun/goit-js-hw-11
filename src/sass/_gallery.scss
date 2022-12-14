@@ -16,7 +16,6 @@
   border: rgb(0, 26, 255) solid 1px;
 
   &:hover img {
-    filter: grayscale(0);
     transition: filter 1000ms cubic-bezier(0.4, 0, 0.2, 1);
   }
 
