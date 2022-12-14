@@ -9,7 +9,6 @@ import { PixabayAPI } from './js/PixabayAPI';
 const pixabayApi = new PixabayAPI();
 
 refs.loadMoreBtn.setAttribute('disabled', true);
-let page = 1;
 
 async function onFormSubmit(e) {
   e.preventDefault();
@@ -25,10 +24,10 @@ async function onFormSubmit(e) {
     return;
   }
 
-  page = 1;
+  pixabayApi.resetPage();
   pixabayApi.query = searchValue;
 
-  const data = await pixabayApi.getImagesByQuery(page);
+  const data = await pixabayApi.getImagesByQuery(pixabayApi.page);
 
   if (data.hits.length === 0) {
     Notify.failure(
@@ -43,25 +42,25 @@ async function onFormSubmit(e) {
   refs.gallery.innerHTML = markup;
   lightbox.refresh();
 
-  if (page < Math.ceil(data.totalHits / 40)) {
+  if (pixabayApi.page < Math.ceil(data.totalHits / 40)) {
     refs.loadMoreBtn.removeAttribute('disabled');
   }
-  if (page >= Math.ceil(data.totalHits / 40)) {
+  if (pixabayApi.page >= Math.ceil(data.totalHits / 40)) {
     refs.loadMoreBtn.setAttribute('disabled', true);
   }
   refs.searchForm.reset();
 }
 
 async function onLoadMore(e) {
-  page += 1;
-  const data = await pixabayApi.getImagesByQuery(page);
+  pixabayApi.incrementPage();
+  const data = await pixabayApi.getImagesByQuery(pixabayApi.page);
   lightbox.refresh();
 
   const markup = createGallery(data.hits);
   refs.gallery.insertAdjacentHTML('beforeend', markup);
 
-  const totalPage = (await data.totalHits) / 40;
-  if (page >= totalPage) {
+  const totalPage = data.totalHits / 40;
+  if (pixabayApi.page >= totalPage) {
     Notify.info("We're sorry, but you've reached the end of search results.");
     refs.loadMoreBtn.setAttribute('disabled', true);
   }
